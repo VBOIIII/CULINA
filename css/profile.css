@@ -1,0 +1,137 @@
+/* Profile Card Container */
+.rp-container {
+    background-color: #2F353B;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    color: #D1C6B1;
+    margin-top: 20px; 
+    margin-bottom: 20px;
+}
+
+/* Sidebar Links */
+.rp-list-group-item {
+    padding: 8px 18px;
+    border: none;
+    background-color: transparent;
+    color: #D1C6B1;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.rp-list-group-item:hover {
+    background-color: #D17A5D;
+    color: #FFFFFF;
+    border-radius: 6px;
+}
+
+.rp-list-group-item.active {
+    background-color: #2F353B;
+    color: #D1C6B1;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+/* Profile Card */
+.card {
+    background-color: #F1E6D1;
+}
+
+.rp-card {
+    background-color: #D1C6B1;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #2F353B;
+}
+
+.rp-card img {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+}
+
+/* Form Elements */
+.rp-form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2F353B;
+}
+
+.rp-form-control {
+    background-color: #D1C6B1; 
+    border: 1px solid #2F353B;
+    border-radius: 4px;
+    padding: 8px 12px;
+    width: 100%;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.rp-form-control:focus {
+    border-color: #D17A5D;
+    box-shadow: 0 0 0 3px rgba(209, 122, 93, 0.25);
+}
+
+/* Buttons */
+.rp-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.rp-btn-primary {
+    background-color: #D17A5D;
+    color: #FFFFFF;
+    border: none;
+}
+
+.rp-btn-primary:hover {
+    background-color: #D1C6B1;
+    transform: scale(1.05);
+    color: black;
+}
+
+.rp-btn-default {
+    background-color: #D1C6B1;
+    color: #2F353B;
+    border: none;
+}
+
+.rp-btn-default:hover {
+    background-color: #D17A5D;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Social Buttons */
+.rp-btn-facebook {
+    background-color: #2F353B;
+    color: #FFFFFF;
+    border: none;
+}
+
+.rp-btn-instagram {
+    background-color: #D17A5D;
+    color: #FFFFFF;
+    border: none;
+}
+
+/* Other Elements */
+.rp-text-light {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.rp-alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px;
+    border: 1px solid #ffeeba;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
