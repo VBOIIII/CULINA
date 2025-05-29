@@ -76,7 +76,7 @@ foreach ($categories as $category) {
         </a>
         <ul class="links">
             <span class="close-btn material-symbols-rounded">close</span>
-            <li id="home-link"><a href="index.php">Home</a></li>
+            <li id="home-link"><a href="home.php">Home</a></li>
             <li id="about-link"><a href="about.php#about-us-container">About</a>
                 <ul>
                     <li><a href="about.php#about-us-container">About Us</a></li>

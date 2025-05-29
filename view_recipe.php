@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $userLoggedIn) {
     <nav class="navbar">
         <span class="hamburger-btn material-symbols-rounded">menu</span>
         <a href="#" class="logo">
-        <img src="logo/logo-header.png" alt="logo">
+        <img src="logo\logo-header.png" alt="logo">
         </a>
         <ul class="links">
             <span class="close-btn material-symbols-rounded">close</span>
