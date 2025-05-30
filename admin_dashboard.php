@@ -215,7 +215,7 @@ $result = $conn->query("SELECT * FROM recipes $filter ORDER BY created_at DESC")
 </div>
 
 <div class="container">
-    <a href="home.php" class="back-btn">&larr; Back to Home</a>
+   
 
     <form method="get" class="search-bar mt-4">
         <input type="text" name="search" placeholder="Search recipes..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">

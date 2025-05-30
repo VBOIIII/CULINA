@@ -17,68 +17,67 @@ if ($conn->connect_error) {
 
 $message = '';
 
-// List of banned words
+// Banned words list
 $badWords = [
-    'porn', 'porno', 'sex', 'xxx', 'nude', 'naked', 'adult', 'erotic', 'erotica',
-    'pussy', 'dick', 'cock', 'asshole', 'bitch', 'slut', 'whore', 'fetish',
-    'fetishes', 'anal', 'cum', 'boobs', 'breasts', 'penis', 'vagina', 'tits',
-    'rape', 'incest', 'fuck', 'fucking', 'fucked', 'motherfucker', 'blowjob',
-    'cunt', 'dildo', 'hentai', 'gangbang', 'orgy', 'milf', 'bdsm', 'domination',
-    'kinky', 'lewd', 'masturbate', 'masturbation', 'sexy', 'porno', 'sexually',
-    'eroticism', 'pornography', 'strip', 'stripper', 'twat', 'jerk off', 'handjob',
-    'cumshot', 'butt', 'spank', 'spanking', 'deepthroat', 'clitoris', 'vibrator',
-    'sperm', 'orgasm', 'ass', 'balls', 'bastard', 'slutty', 'twat', 'meme',
-    'memes', 'shitpost', 'shitposting', 'troll', 'spam', 'advertisement',
-    'ad', 'scam', 'clickbait', 'fake', 'prank', 'shit', 'bullshit', 'crap',
-    'stupid', 'rickroll', 'rick astley', 'funny', 'laugh', 'lol', 'rofl', 'lmao',
-    'lmfao', 'tae', 'bomba', 'marijuana', 'shabu'
+    'adult', 'anal', 'ass', 'asshole', 'balls', 'bastard', 'bdsm', 'bitch',
+    'blowjob', 'boobs', 'bomba', 'bullshit', 'butt', 'clickbait', 'clitoris', 'cock',
+    'crap', 'cum', 'cumshot', 'cunt', 'deepthroat', 'dick', 'dildo', 'domination',
+    'erotic', 'erotica', 'eroticism', 'fake', 'fetish', 'fetishes', 'fuck', 'fucked',
+    'fucking', 'funny', 'gangbang', 'handjob', 'hentai', 'incest', 'jerk off',
+    'kinky', 'laugh', 'lewd', 'lmao', 'lmfao', 'masturbate', 'masturbation',
+    'marijuana', 'meme', 'memes', 'milf', 'motherfucker', 'naked', 'nude', 'orgasm',
+    'orgy', 'penis', 'porn', 'pornography', 'porno', 'prank', 'pussy', 'rape',
+    'rick astley', 'rickroll', 'rofl', 'scam', 'sex', 'sexually', 'sexy', 'shabu',
+    'shit', 'shitpost', 'shitposting', 'slut', 'slutty', 'spam', 'spank', 'spanking',
+    'sperm', 'stupid', 'strip', 'stripper', 'tae', 'tits', 'troll', 'twat',
+    'vagina', 'vibrator', 'whore', 'xxx',
 ];
 
-// Check for bad words
 function containsBadWords($text, $badWords) {
     $text = strtolower($text);
     foreach ($badWords as $word) {
-        if (strpos($text, $word) !== false) {
+        // Use word boundaries and case-insensitive match
+        if (preg_match('/\b' . preg_quote($word, '/') . '\b/i', $text)) {
             return true;
         }
     }
     return false;
 }
 
-// Check for numbers in text
-function containsNumbers($text) {
-    return preg_match('/\d/', $text);
-}
-
-// Check if input is likely valid (not random garbage)
+// Ensure the input isn't too short or meaningless
 function isValidRecipeText($text, $minWords = 5) {
-    $text = strip_tags($text);
+    $text = strip_tags($text); // Remove HTML tags, keep all characters
     $wordCount = str_word_count($text);
+
+    // Optional: Debug alert (remove or comment in production)
+    // echo "<script>alert('Word count: $wordCount'); window.history.back();</script>";
+
     return $wordCount >= $minWords;
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Sanitize and fetch form data
     $recipeName = trim($_POST['recipe-name'] ?? '');
     $timeToCook = trim($_POST['time-to-cook'] ?? '');
     $ingredients = trim($_POST['ingredients'] ?? '');
     $instructions = trim($_POST['instructions'] ?? '');
     $category = trim($_POST['category'] ?? '');
 
-    // Validate content
+    // Check for empty fields
+    if (empty($recipeName) || empty($timeToCook) || empty($ingredients) || empty($instructions) || empty($category)) {
+        echo "<script>alert('All fields are required.'); window.history.back();</script>";
+        exit();
+    }
+
+    // Check for inappropriate or insufficient content
     if (
-        empty($recipeName) || empty($timeToCook) || empty($ingredients) || empty($instructions) || empty($category) ||
         containsBadWords($recipeName, $badWords) ||
         containsBadWords($ingredients, $badWords) ||
         containsBadWords($instructions, $badWords) ||
-        containsNumbers($recipeName) ||
         !isValidRecipeText($ingredients) ||
         !isValidRecipeText($instructions)
     ) {
-        echo "<script>
-            alert('Invalid recipe: avoid numbers in title, bad words, and make sure ingredients/instructions are detailed.');
-            window.history.back();
-        </script>";
+        echo "<script>alert('Recipe rejected: avoid bad words or overly short descriptions.'); window.history.back();</script>";
         exit();
     }
 
@@ -89,15 +88,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             mkdir($targetDir, 0777, true);
         }
 
-        $targetFile = $targetDir . uniqid() . "-" . basename($_FILES["recipe-image"]["name"]);
+        $fileName = uniqid() . "-" . basename($_FILES["recipe-image"]["name"]);
+        $targetFile = $targetDir . $fileName;
         $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $validTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
-        if (getimagesize($_FILES["recipe-image"]["tmp_name"]) === false) {
-            $message = '<div class="alert alert-danger">File is not an image.</div>';
+        if (!getimagesize($_FILES["recipe-image"]["tmp_name"])) {
+            $message = '<div class="alert alert-danger">File is not a valid image.</div>';
         } elseif ($_FILES["recipe-image"]["size"] > 5000000) {
-            $message = '<div class="alert alert-danger">File is too large. Max size: 5MB.</div>';
-        } elseif (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $message = '<div class="alert alert-danger">Only JPG, JPEG, PNG & GIF formats are allowed.</div>';
+            $message = '<div class="alert alert-danger">Image too large. Max size: 5MB.</div>';
+        } elseif (!in_array($imageFileType, $validTypes)) {
+            $message = '<div class="alert alert-danger">Only JPG, JPEG, PNG & GIF are allowed.</div>';
         } else {
             if (move_uploaded_file($_FILES["recipe-image"]["tmp_name"], $targetFile)) {
                 $stmt = $conn->prepare("INSERT INTO recipes (name, time_to_cook, ingredients, instructions, image, category) VALUES (?, ?, ?, ?, ?, ?)");
@@ -108,16 +109,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header('Location: recipe.php');
                     exit;
                 } else {
-                    $message = '<div class="alert alert-danger">Error: ' . $stmt->error . '</div>';
+                    $message = '<div class="alert alert-danger">Database error: ' . $stmt->error . '</div>';
                 }
 
                 $stmt->close();
             } else {
-                $message = '<div class="alert alert-danger">Error uploading image.</div>';
+                $message = '<div class="alert alert-danger">Image upload failed.</div>';
             }
         }
     } else {
-        $message = '<div class="alert alert-danger">No image uploaded or upload failed.</div>';
+        $message = '<div class="alert alert-danger">Please upload an image.</div>';
+    }
+
+    // Show message if not redirected
+    if (!empty($message)) {
+        echo "<script>alert(`" . strip_tags($message) . "`); window.history.back();</script>";
     }
 }
 ?>
